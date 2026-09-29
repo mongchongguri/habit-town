@@ -15,7 +15,7 @@ import { DeliveryReward } from '../../../features/rewards/eventRewards';
 import { formatCountdown } from '../../../features/rewards/useHourlyDelivery';
 
 const coinIcon = require('../../../../assets/images/rewards/gromi-coin.png');
-const giftIcon = require('../../../../assets/images/rewards/gift-box-popup-icon.png');
+const giftIcon = require('../../../../assets/images/rewards/animal-rescue-reward-gift-box.png');
 const pixelFontFamily = 'Galmuri11';
 const pixelatedImageStyle =
   Platform.OS === 'web'

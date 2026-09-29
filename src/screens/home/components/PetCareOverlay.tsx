@@ -1,9 +1,6 @@
 import { Image, ImageStyle, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { ViewStyle } from 'react-native';
 import type { ImageSourcePropType } from 'react-native';
-import {
-  experiencePerGrowthStage,
-} from '../../../features/rewards/rewardSystem';
 import type {
   CareMeterKey,
   CareMeterValues,
@@ -59,7 +56,8 @@ const bubbleActionPositions: ViewStyle[] = [
   { left: 64, top: 1 },
   { right: 0, top: 18 },
 ];
-const growthRingSegments = 32;
+const meterSegmentCount = 9;
+const portraitFaceCenterOffsetY = 8;
 const pixelStyle = Platform.OS === 'web'
   ? ({ imageRendering: 'pixelated' } as unknown as ImageStyle) : undefined;
 
@@ -80,25 +78,13 @@ export function PetStatusHud({
   roomName: string;
 }) {
   const { language, t } = useI18n();
-  const growthPercent = progress.experience / experiencePerGrowthStage;
   const locale = language === 'ko' ? 'ko-KR' : 'en-US';
   const portraitContent = (
     <>
       <View style={styles.ringInnerShadow} />
-      {Array.from({ length: growthRingSegments }, (_, index) => {
-        const angle = index / growthRingSegments * Math.PI * 2 - Math.PI / 2;
-        const isFilled = index < Math.round(growthPercent * growthRingSegments);
-
-        return <View key={index} style={[styles.ringSegment, {
-          left: 34 + Math.cos(angle) * 30 - 3,
-          top: 34 + Math.sin(angle) * 30 - 3,
-          transform: [{ rotate: `${index / growthRingSegments * 360}deg` }],
-          backgroundColor: isFilled ? '#87a85d' : '#d5c99f',
-          borderColor: isFilled ? '#5d743f' : '#b9a87d',
-        }]} />;
-      })}
       <View style={styles.portrait}>
-        <Image source={petImage} accessibilityLabel={t('pet.a11y.image', { name: petName })} resizeMode="contain" style={[styles.petImage, pixelStyle]} />
+        <Image source={petImage} accessibilityLabel={t('pet.a11y.image', { name: petName })}
+          resizeMode="contain" style={[styles.petImage, pixelStyle]} />
       </View>
     </>
   );
@@ -117,31 +103,42 @@ export function PetStatusHud({
               {portraitContent}
             </View>
           )}
-          <Text numberOfLines={1} style={styles.stageBadge}>{petName}</Text>
         </View>
         <View style={styles.meters}>
           {previewNeeds.map((need) => {
             const value = careMeters[need.key];
+            const filledSegments = value * meterSegmentCount;
 
             return <View key={need.key} style={styles.meterRow}
               accessibilityRole="progressbar" accessibilityLabel={t(`care.meter.${need.key}`)}
               accessibilityValue={{ min: 0, max: 100, now: Math.round(value * 100) }}>
-            <Image source={need.icon} resizeMode="contain" style={styles.meterIcon} />
-            <View style={styles.track}><View style={[styles.fill, { width: `${value * 100}%`, backgroundColor: need.color }]}>
-              <View style={styles.highlight} />
-            </View></View>
+              <Image source={need.icon} resizeMode="contain" style={[styles.meterIcon, pixelStyle]} />
+              <View style={styles.track}>
+                {Array.from({ length: meterSegmentCount }, (_, index) => (
+                  <View key={index} style={styles.meterSegment}>
+                    {filledSegments > index ? (
+                      <View style={[
+                        styles.meterSegmentFill,
+                        {
+                          backgroundColor: need.color,
+                          width: `${Math.min(1, filledSegments - index) * 100}%`,
+                        },
+                      ]}>
+                        <View style={styles.highlight} />
+                      </View>
+                    ) : null}
+                  </View>
+                ))}
+              </View>
             </View>;
           })}
         </View>
       </View>
-      <View style={styles.roomSummary}>
+      <View style={styles.roomSummary} accessibilityLabel={roomName}>
         <View style={styles.currency} accessibilityLabel={`${t('common.currency')} ${progress.coins}`}>
           <Image accessibilityIgnoresInvertColors source={coinIcon} resizeMode="contain" style={[styles.coinIcon, pixelStyle]} />
           <Text style={styles.currencyText}>{progress.coins.toLocaleString(locale)}</Text>
         </View>
-        <Text numberOfLines={1} style={styles.roomNameText}>
-          {roomName}
-        </Text>
       </View>
     </View>
   );
@@ -232,26 +229,122 @@ export function PetCareBubbleActions({
 }
 
 const styles = StyleSheet.create({
-  top: { position: 'absolute', top: 10, left: 10, right: 10, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, zIndex: 10 },
-  statusPanel: { width: '50%', maxWidth: 390, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  portraitColumn: { alignItems: 'center', width: 68, paddingBottom: 6 },
-  ring: { width: 68, height: 68, borderRadius: 34, borderWidth: 2, borderColor: '#624936', backgroundColor: '#efe1b8' },
-  ringInnerShadow: { position: 'absolute', left: 5, top: 5, width: 54, height: 54, borderRadius: 27, borderWidth: 2, borderColor: '#c8b88e' },
-  ringSegment: { position: 'absolute', width: 6, height: 6, borderWidth: 1 },
-  portrait: { position: 'absolute', left: 4, top: 4, width: 58, height: 58, borderRadius: 29, borderWidth: 1, borderColor: '#624936', backgroundColor: '#fffaf0', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  petImage: { width: 86, height: 86, flexShrink: 0, transform: [{ translateX: 3 }, { translateY: 11 }] },
-  stageBadge: { position: 'absolute', bottom: 0, zIndex: 1, maxWidth: 86, fontFamily, fontSize: 9, color: '#624936', backgroundColor: '#fff0cd', borderColor: '#795c43', borderWidth: 1, paddingHorizontal: 5, paddingVertical: 2 },
-  meters: { flex: 1, minWidth: 0, gap: 8 },
-  meterRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  meterIcon: { width: 14, height: 14 },
-  track: { flex: 1, height: 14, borderWidth: 1, borderColor: '#795c43', backgroundColor: '#fffaf0', padding: 2 },
-  fill: { height: '100%' },
-  highlight: { height: 2, backgroundColor: 'rgba(255,255,255,0.5)' },
-  roomSummary: { flexShrink: 0, alignItems: 'flex-end', marginTop: 4 },
-  currency: { flexShrink: 0, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 2, height: 38, marginTop: 2 },
-  currencyText: { fontFamily, fontSize: 12, fontWeight: '900', color: '#604832', textShadowColor: '#fff8ea', textShadowOffset: { height: 1, width: 1 }, textShadowRadius: 0 },
-  coinIcon: { width: 32, height: 32 },
-  roomNameText: { maxWidth: 132, fontFamily, fontSize: 11, color: '#5e4235', fontWeight: '900', letterSpacing: 0, marginTop: -2, textShadowColor: '#fff8ea', textShadowOffset: { height: 1, width: 1 }, textShadowRadius: 0 },
+  top: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 249, 233, 0.96)',
+    borderBottomColor: '#795c43',
+    borderBottomWidth: 2,
+    borderTopColor: '#795c43',
+    borderTopWidth: 2,
+    flexDirection: 'row',
+    gap: 8,
+    height: 94,
+    justifyContent: 'space-between',
+    left: 0,
+    paddingBottom: 7,
+    paddingHorizontal: 8,
+    paddingTop: 7,
+    position: 'absolute',
+    right: 0,
+    shadowColor: '#765438',
+    shadowOffset: { height: 4, width: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 0,
+    top: 0,
+    zIndex: 10,
+  },
+  statusPanel: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    gap: 8,
+    maxWidth: 360,
+    minWidth: 0,
+  },
+  portraitColumn: { alignItems: 'center', width: 60 },
+  ring: {
+    backgroundColor: '#fffdf6',
+    borderColor: '#624936',
+    borderRadius: 4,
+    borderWidth: 2,
+    height: 60,
+    shadowColor: '#6a4932',
+    shadowOffset: { height: 3, width: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 0,
+    width: 60,
+  },
+  ringInnerShadow: {
+    borderColor: '#e5d8b9',
+    borderRadius: 2,
+    borderWidth: 2,
+    bottom: 4,
+    left: 4,
+    position: 'absolute',
+    right: 4,
+    top: 4,
+  },
+  portrait: {
+    alignItems: 'center',
+    backgroundColor: '#fffaf0',
+    borderColor: '#624936',
+    borderRadius: 2,
+    borderWidth: 1,
+    bottom: 5,
+    justifyContent: 'center',
+    left: 5,
+    overflow: 'hidden',
+    position: 'absolute',
+    right: 5,
+    top: 5,
+  },
+  petImage: {
+    flexShrink: 0,
+    height: 82,
+    transform: [{ translateY: portraitFaceCenterOffsetY }],
+    width: 82,
+  },
+  meters: { flex: 1, gap: 7, maxWidth: 240, minWidth: 140 },
+  meterRow: { alignItems: 'center', flexDirection: 'row', gap: 5 },
+  meterIcon: { height: 20, width: 20 },
+  track: {
+    backgroundColor: '#fffdf6',
+    borderColor: '#795c43',
+    borderWidth: 2,
+    flex: 1,
+    flexDirection: 'row',
+    gap: 1,
+    height: 16,
+    padding: 2,
+  },
+  meterSegment: { backgroundColor: '#f0eadc', flex: 1, minWidth: 2, overflow: 'hidden' },
+  meterSegmentFill: { height: '100%' },
+  highlight: { height: 2, backgroundColor: 'rgba(255,255,255,0.42)', width: '100%' },
+  roomSummary: {
+    alignItems: 'flex-end',
+    flexShrink: 0,
+    justifyContent: 'center',
+    minWidth: 82,
+    paddingRight: 1,
+  },
+  currency: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexShrink: 0,
+    backgroundColor: '#fff8ea',
+    borderColor: '#795c43',
+    borderWidth: 2,
+    gap: 4,
+    height: 34,
+    justifyContent: 'flex-end',
+    paddingHorizontal: 5,
+    shadowColor: '#765438',
+    shadowOffset: { height: 3, width: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 0,
+  },
+  currencyText: { fontFamily, fontSize: 11, fontWeight: '900', color: '#604832' },
+  coinIcon: { height: 22, width: 22 },
   bottom: { position: 'absolute', bottom: 14, left: 16, right: 16, alignItems: 'center', zIndex: 10 },
   actions: { flexDirection: 'row', width: '100%', maxWidth: 390, gap: 10 },
   action: { flex: 1, minHeight: 52, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderBottomWidth: 5, borderColor: '#795c43', paddingVertical: 8 },
