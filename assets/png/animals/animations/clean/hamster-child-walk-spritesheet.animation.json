@@ -1,0 +1,17 @@
+{
+  "id": "hamster_child_walk",
+  "source": "assets/png/animals/hamster-child.png",
+  "frameCount": 4,
+  "frameWidth": 193,
+  "frameHeight": 193,
+  "durationMs": 220,
+  "background": "transparent",
+  "appliedSheet": "assets/png/animals/animations/applied/hamster/walk/hamster-child-walk-spritesheet-v2.png",
+  "notes": [
+    "Built from the existing hamster child sprite without redrawing, recoloring, outline edits, or background removal",
+    "Frames use whole-sprite nearest-neighbor step offsets only: neutral, lifted-left, neutral, lifted-right",
+    "Frame canvas stays at the native 193x193 child source canvas to preserve pixel density and safety margins",
+    "Alpha remains binary and transparent outside the sprite",
+    "Intended to be wired separately from the existing hamster baby walk animation"
+  ]
+}

@@ -57,6 +57,7 @@ import {
   consumeGiftBox,
   increaseGiftBoxCount,
   loadGiftBoxCount,
+  maxGiftBoxCount,
 } from '../../features/rewards/giftBoxRepository';
 import { experiencePerGrowthStage, growthStages } from '../../features/rewards/rewardSystem';
 import type { CareMeterKey } from '../../features/rewards/rewardSystem';
@@ -1345,6 +1346,7 @@ export function HomeScreen() {
         <GiftRewardPopup
           giftBoxCount={giftBoxCount}
           isBusy={isClaimingGiftReward}
+          maxGiftBoxCount={maxGiftBoxCount}
           onClose={closeGiftReward}
           onOpenBox={openGiftBox}
           reward={giftReward}

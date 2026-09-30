@@ -2,6 +2,7 @@ import * as SQLite from 'expo-sqlite';
 
 const databaseName = 'habit-town.db';
 const giftBoxCountMetadataKey = 'gift_box_count';
+export const maxGiftBoxCount = 5;
 
 let databasePromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
@@ -18,7 +19,7 @@ export async function loadGiftBoxCount(): Promise<number> {
 export async function increaseGiftBoxCount(amount = 1): Promise<number> {
   const db = await getGiftBoxDatabase();
   const currentCount = await loadGiftBoxCount();
-  const nextCount = Math.max(0, currentCount + amount);
+  const nextCount = clampGiftBoxCount(currentCount + amount);
 
   await saveGiftBoxCount(db, nextCount);
 
@@ -70,5 +71,9 @@ async function saveGiftBoxCount(db: SQLite.SQLiteDatabase, count: number): Promi
 function normalizeGiftBoxCount(value: string | undefined): number {
   const count = Number(value);
 
-  return Number.isInteger(count) && count > 0 ? count : 0;
+  return clampGiftBoxCount(count);
+}
+
+function clampGiftBoxCount(count: number): number {
+  return Number.isInteger(count) && count > 0 ? Math.min(count, maxGiftBoxCount) : 0;
 }

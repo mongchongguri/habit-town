@@ -24,6 +24,7 @@ const pixelatedImageStyle =
 type GiftRewardPopupProps = {
   giftBoxCount: number;
   isBusy: boolean;
+  maxGiftBoxCount: number;
   onClose: () => void;
   onOpenBox: () => void;
   reward: DeliveryReward | null;
@@ -35,6 +36,7 @@ type GiftRewardPopupProps = {
 export function GiftRewardPopup({
   giftBoxCount,
   isBusy,
+  maxGiftBoxCount,
   onClose,
   onOpenBox,
   reward,
@@ -49,6 +51,7 @@ export function GiftRewardPopup({
   }
 
   const canOpenGiftBox = giftBoxCount > 0 && !reward;
+  const isGiftBoxStorageFull = giftBoxCount >= maxGiftBoxCount;
   const nextGiftCountdown = secondsUntilNext === null
     ? t('gift.checking')
     : formatCountdown(secondsUntilNext);
@@ -95,17 +98,27 @@ export function GiftRewardPopup({
                   <View style={styles.rewardCard}>
                     <Text style={styles.cardEyebrow}>UNOPENED</Text>
                     <Text style={styles.rewardTitle}>
-                      {giftBoxCount > 0 ? t('gift.boxReady') : t('gift.boxEmpty')}
+                      {isGiftBoxStorageFull
+                        ? t('gift.boxFull')
+                        : giftBoxCount > 0 ? t('gift.boxReady') : t('gift.boxEmpty')}
                     </Text>
                     <Text style={styles.rewardDescription}>
-                      {giftBoxCount > 0
+                      {isGiftBoxStorageFull
+                        ? t('gift.boxFullDescription', { count: String(maxGiftBoxCount) })
+                        : giftBoxCount > 0
                         ? t('gift.boxReadyDescription')
                         : t('gift.boxEmptyDescription')}
                     </Text>
-                    <View style={styles.countdownRow}>
-                      <Text style={styles.countdownLabel}>{t('gift.nextGift')}</Text>
-                      <Text style={styles.countdownValue}>{nextGiftCountdown}</Text>
-                    </View>
+                    {isGiftBoxStorageFull ? (
+                      <View style={styles.countdownRow}>
+                        <Text style={styles.fullNoticeText}>{t('gift.boxFullStatus')}</Text>
+                      </View>
+                    ) : (
+                      <View style={styles.countdownRow}>
+                        <Text style={styles.countdownLabel}>{t('gift.nextGift')}</Text>
+                        <Text style={styles.countdownValue}>{nextGiftCountdown}</Text>
+                      </View>
+                    )}
                   </View>
                 )}
               </View>
@@ -415,6 +428,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '900',
     letterSpacing: 0,
+  },
+  fullNoticeText: {
+    color: '#9b6234',
+    flex: 1,
+    fontFamily: pixelFontFamily,
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 0,
+    lineHeight: 14,
   },
   rewardTitle: {
     color: '#35281f',

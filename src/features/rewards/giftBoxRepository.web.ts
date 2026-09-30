@@ -1,4 +1,5 @@
 const giftBoxCountStorageKey = 'habit-town.gift-box.count.v1';
+export const maxGiftBoxCount = 5;
 
 let memoryGiftBoxCount: number | null = null;
 
@@ -7,7 +8,7 @@ export async function loadGiftBoxCount(): Promise<number> {
 }
 
 export async function increaseGiftBoxCount(amount = 1): Promise<number> {
-  const nextCount = Math.max(0, readGiftBoxCount() + amount);
+  const nextCount = clampGiftBoxCount(readGiftBoxCount() + amount);
   writeGiftBoxCount(nextCount);
 
   return nextCount;
@@ -34,8 +35,12 @@ function readGiftBoxCount(): number {
   const storage = getBrowserStorage();
   const count = storage ? Number(storage.getItem(giftBoxCountStorageKey)) : 0;
 
-  memoryGiftBoxCount = Number.isInteger(count) && count > 0 ? count : 0;
+  memoryGiftBoxCount = clampGiftBoxCount(count);
   return memoryGiftBoxCount;
+}
+
+function clampGiftBoxCount(count: number): number {
+  return Number.isInteger(count) && count > 0 ? Math.min(count, maxGiftBoxCount) : 0;
 }
 
 function writeGiftBoxCount(count: number): void {
