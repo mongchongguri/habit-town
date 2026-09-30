@@ -1230,7 +1230,7 @@ export function HomeScreen() {
         <PetStatusHud
           careMeters={careMeters}
           onPressPet={() => setIsPetStatusOpen(true)}
-          petImage={activePet.stages[currentStage]}
+          petImage={activePet.profileStages?.[currentStage] ?? activePet.stages[currentStage]}
           petName={activePetDisplayName}
           progress={rewardProgress}
           roomName={activePetRoomName}

@@ -36,6 +36,9 @@ export const pets: PetDefinition[] = [
   {
     id: 'cat',
     name: 'Cat',
+    profileStages: {
+      baby: require('../../../assets/png/animals/profile/cat-baby-profile.png'),
+    },
     roomName: "Cat's Room",
     stages: {
       adult: require('../../../assets/png/animals/cat-adult.png'),
@@ -47,6 +50,9 @@ export const pets: PetDefinition[] = [
   {
     id: 'hamster',
     name: 'Hamster',
+    profileStages: {
+      baby: require('../../../assets/png/animals/profile/hamster-baby-profile.png'),
+    },
     roomName: "Hamster's Room",
     stages: {
       adult: require('../../../assets/png/animals/hamster-adult.png'),
@@ -58,6 +64,9 @@ export const pets: PetDefinition[] = [
   {
     id: 'dog',
     name: 'Dog',
+    profileStages: {
+      baby: require('../../../assets/png/animals/profile/dog-baby-profile.png'),
+    },
     roomName: "Dog's Room",
     stages: {
       adult: require('../../../assets/png/animals/dog-adult.png'),

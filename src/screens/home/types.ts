@@ -22,6 +22,7 @@ export type RailMetrics = {
 export type PetDefinition = {
   id: 'cat' | 'hamster' | 'dog';
   name: string;
+  profileStages?: Partial<Record<GrowthStage, ImageSourcePropType>>;
   roomName: string;
   stages: Record<GrowthStage, ImageSourcePropType>;
 };
