@@ -5,6 +5,7 @@ import {
   ImageSourcePropType,
   LayoutChangeEvent,
   PanResponder,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -203,6 +204,7 @@ export function HomeScreen() {
   const [isUsingCareItem, setIsUsingCareItem] = useState(false);
   const [placementItem, setPlacementItem] = useState<InventoryItem | null>(null);
   const [isRepositioningPlacedItem, setIsRepositioningPlacedItem] = useState(false);
+  const [isDraggingPlacedDecor, setIsDraggingPlacedDecor] = useState(false);
   const [placementError, setPlacementError] = useState('');
   const [placedDecorItems, setPlacedDecorItems] = useState<Record<string, PlacedDecorItem>>({});
   const [selectedDecorItemId, setSelectedDecorItemId] = useState<string | null>(null);
@@ -828,6 +830,7 @@ export function HomeScreen() {
 
     setPlacementError('');
     setSelectedDecorItemId(null);
+    setIsDraggingPlacedDecor(false);
     setIsRepositioningPlacedItem(false);
     activePlacementItemIdRef.current = item.id;
     placementOriginalItemRef.current = normalizedExistingPlacement;
@@ -851,6 +854,10 @@ export function HomeScreen() {
     placementOriginalItemRef.current = normalizedExistingPlacement;
     setIsRepositioningPlacedItem(true);
     setPlacementItem(item);
+  };
+  const beginPlacedDecorDrag = (item: InventoryItem) => {
+    setIsDraggingPlacedDecor(true);
+    beginPlacedDecorEdit(item);
   };
   const measureRoomWindowFrame = useCallback(() => {
     roomBackgroundRef.current?.measureInWindow((x, y, frameWidth, frameHeight) => {
@@ -936,6 +943,7 @@ export function HomeScreen() {
     });
     activePlacementItemIdRef.current = null;
     placementOriginalItemRef.current = null;
+    setIsDraggingPlacedDecor(false);
     setIsRepositioningPlacedItem(false);
     setPlacementItem(null);
   };
@@ -949,6 +957,7 @@ export function HomeScreen() {
     pendingPagePointRef.current = null;
     activePlacementItemIdRef.current = null;
     placementOriginalItemRef.current = null;
+    setIsDraggingPlacedDecor(false);
     setIsRepositioningPlacedItem(false);
     setPlacementItem(null);
     setPlacementError('');
@@ -1040,6 +1049,8 @@ export function HomeScreen() {
     saveDecorPlacementAndClose(item, x, y);
   };
   const finishPlacedDecorDrag = (item: InventoryItem, pageX: number, pageY: number, didMove: boolean) => {
+    setIsDraggingPlacedDecor(false);
+
     if (!didMove) {
       beginPlacedDecorEdit(item);
       return;
@@ -1089,7 +1100,7 @@ export function HomeScreen() {
     removePlacedDecorItem(placementItem.id);
   };
   useEffect(() => {
-    if (!placementItem || typeof window === 'undefined') return undefined;
+    if (!placementItem || Platform.OS !== 'web') return undefined;
 
     const finishPlacement = () => {
       const item = placementItem;
@@ -1148,7 +1159,7 @@ export function HomeScreen() {
                 key={placedItem.item.id}
                 onDragEnd={finishPlacedDecorDrag}
                 onDragMove={movePlacedDecorFromPagePoint}
-                onLongPress={beginPlacedDecorEdit}
+                onLongPress={beginPlacedDecorDrag}
                 onPress={(item) => setSelectedDecorItemId((current) => (
                   current === item.id ? null : item.id
                 ))}
@@ -1193,7 +1204,10 @@ export function HomeScreen() {
               />
             </View>
             {placementItem ? (
-              <View style={styles.placementLayer}>
+              <View
+                pointerEvents={isDraggingPlacedDecor ? 'none' : 'auto'}
+                style={styles.placementLayer}
+              >
                 <Pressable
                   {...placementDragResponder.panHandlers}
                   accessibilityLabel={t('home.placementA11y', { name: placementItemDisplayName })}
@@ -1201,13 +1215,6 @@ export function HomeScreen() {
                   onPress={placeDecorItem}
                   style={styles.placementHitArea}
                 />
-                <View style={styles.placementToolbar}>
-                  <Text style={styles.placementText}>
-                    {isRepositioningPlacedItem
-                      ? t('home.placementMoveText', { name: placementItemDisplayName })
-                      : t('home.placementText', { name: placementItemDisplayName })}
-                  </Text>
-                </View>
                 {isRepositioningPlacedItem ? (
                   <Pressable
                     accessibilityLabel={t('home.returnToBagA11y', { name: placementItemDisplayName })}
@@ -1575,6 +1582,7 @@ function PlacedDecorObject({
         didMove,
       );
     },
+    onPanResponderTerminationRequest: () => false,
     onStartShouldSetPanResponder: () => true,
   }), [item, onDragEnd, onDragMove, onLongPress, onPress]);
 
@@ -1767,22 +1775,6 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     zIndex: 0,
-  },
-  placementText: {
-    color: '#35281f',
-    fontFamily: pixelFontFamily,
-    fontSize: 11,
-    fontWeight: '900',
-    letterSpacing: 0,
-  },
-  placementToolbar: {
-    alignItems: 'center',
-    backgroundColor: '#fff8ea',
-    borderColor: '#3d2d28',
-    borderWidth: 2,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    zIndex: 1,
   },
   returnToBagIcon: {
     height: 78,
