@@ -47,7 +47,12 @@ export function StartupSplash({ onLayout, progress }: StartupSplashProps) {
 
   return (
     <View onLayout={onLayout} style={styles.screen}>
-      <View style={{ height: artworkHeight, width: artworkWidth }}>
+      <View
+        style={{
+          height: artworkHeight,
+          width: artworkWidth,
+        }}
+      >
         <Image resizeMode="contain" source={splashBackground} style={styles.artwork} />
         <View
           accessibilityLabel={`Loading ${Math.round(normalizedProgress * 100)}%`}
