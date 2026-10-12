@@ -4,6 +4,7 @@ import { useI18n } from '../../../features/i18n';
 import { GrowthStage, PetDefinition } from '../types';
 
 const hamsterBabyWalkSheet = require('../../../../assets/png/animals/animations/applied/hamster/walk/hamster-baby-walk-spritesheet-v2.png');
+const hamsterChildWalkSheet = require('../../../../assets/png/animals/animations/applied/hamster/walk/hamster-child-walk-spritesheet-v2.png');
 const hamsterBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/hamster/doze/hamster-baby-doze-spritesheet-v2.png');
 const catBabyWalkSheet = require('../../../../assets/png/animals/animations/applied/cat/walk/cat-baby-walk-spritesheet-v2.png');
 const catBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-baby-doze-spritesheet-v2.png');
@@ -71,6 +72,7 @@ export function StaticPet({
   const [dozeFrameIndex, setDozeFrameIndex] = useState(0);
   const isInsideDozeZoneRef = useRef(false);
   const shouldUseHamsterBabyAnimation = pet.id === 'hamster' && stage === 'baby';
+  const shouldUseHamsterChildWalkAnimation = pet.id === 'hamster' && stage === 'child';
   const shouldUseCatBabyWalkAnimation = pet.id === 'cat' && stage === 'baby';
   const shouldUseCatBabyDozeAnimation = pet.id === 'cat' && stage === 'baby';
   const shouldUseCatChildDozeAnimation = pet.id === 'cat' && stage === 'child';
@@ -79,6 +81,7 @@ export function StaticPet({
   const shouldUseDogBabyWalkAnimation = pet.id === 'dog' && stage === 'baby';
   const shouldUseDogBabyDozeAnimation = pet.id === 'dog' && stage === 'baby';
   const shouldUseWalkAnimation = shouldUseHamsterBabyAnimation
+    || shouldUseHamsterChildWalkAnimation
     || shouldUseCatBabyWalkAnimation
     || shouldUseDogBabyWalkAnimation;
   const shouldUseDozeAnimation = shouldUseHamsterBabyAnimation
@@ -91,7 +94,9 @@ export function StaticPet({
     ? catBabyWalkSheet
     : shouldUseDogBabyWalkAnimation
       ? dogBabyWalkSheet
-      : hamsterBabyWalkSheet;
+      : shouldUseHamsterChildWalkAnimation
+        ? hamsterChildWalkSheet
+        : hamsterBabyWalkSheet;
   const dozeSpriteSheet = shouldUseCatAdultDozeAnimation
     ? catAdultDozeSheet
     : shouldUseCatTeenDozeAnimation
@@ -111,7 +116,7 @@ export function StaticPet({
         ? Math.round(size * catAdultDozeDisplayScale)
         : size;
   const shouldFlipWalkFrame =
-    (shouldUseHamsterBabyAnimation && walkDirection === 'right')
+    ((shouldUseHamsterBabyAnimation || shouldUseHamsterChildWalkAnimation) && walkDirection === 'right')
     || ((shouldUseCatBabyWalkAnimation || shouldUseDogBabyWalkAnimation) && walkDirection === 'left');
   const walkRange = Math.round(size * hamsterBabyWalkRangeRatio);
   const walkStep = Math.max(2, Math.round(size * hamsterBabyWalkStepRatio));

@@ -33,7 +33,7 @@ export const growthStageLabels: Record<GrowthStage, string> = {
 };
 
 export const initialRewardProgress: RewardProgress = {
-  coins: 0,
+  coins: 2000,
   experience: 0,
   level: 1,
   stage: 'baby',
