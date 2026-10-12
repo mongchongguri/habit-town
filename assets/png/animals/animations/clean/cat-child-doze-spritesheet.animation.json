@@ -1,0 +1,19 @@
+{
+  "id": "cat_child_doze",
+  "source": "assets/png/animals/animations/raw/cat-child-doze-generated-v3.png",
+  "frameCount": 4,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "durationMs": 620,
+  "background": "transparent",
+  "appliedSheet": "assets/png/animals/animations/applied/cat/doze/cat-child-doze-spritesheet-v2.png",
+  "notes": [
+    "Generated from the existing cat child sprite as the identity and anatomy source of truth",
+    "Child proportions use a smaller head-to-body ratio, longer torso, longer forelegs and paws, taller ears, and a longer tail than the baby stage",
+    "Rear-leg anatomy is tucked beneath the torso with only a small rear paw tip visible, and the tail starts clearly behind the rump",
+    "Four frames share one 128x128 logical grid and palette before 2x nearest-neighbor output",
+    "Frames use binary transparency and a maximum of 32 colors",
+    "The app renders the low sleeping child pose at 1.2x so its perceived growth remains larger than the baby stage",
+    "The sleeping loop uses frames 2-3-4-3-2 in app code"
+  ]
+}

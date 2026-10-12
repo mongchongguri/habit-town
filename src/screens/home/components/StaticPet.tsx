@@ -7,6 +7,7 @@ const hamsterBabyWalkSheet = require('../../../../assets/png/animals/animations/
 const hamsterBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/hamster/doze/hamster-baby-doze-spritesheet-v2.png');
 const catBabyWalkSheet = require('../../../../assets/png/animals/animations/applied/cat/walk/cat-baby-walk-spritesheet-v2.png');
 const catBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-baby-doze-spritesheet-v2.png');
+const catChildDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-child-doze-spritesheet-v2.png');
 const dogBabyWalkSheet = require('../../../../assets/png/animals/animations/applied/dog/walk/dog-baby-walk-spritesheet-v2.png');
 const dogBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/dog/doze/dog-baby-doze-spritesheet-v2.png');
 const hamsterBabyWalkFrameCount = 4;
@@ -21,6 +22,7 @@ const hamsterBabyDozeFrameDurationMs = 560;
 const hamsterBabyDozeSleepDurationMs = 12000;
 const hamsterBabyDozeLoop = [1, 2, 3, 2, 1];
 const hamsterBabyCushionDozeChance = 0.45;
+const catChildDozeDisplayScale = 1.2;
 const pixelatedImageStyle =
   Platform.OS === 'web'
     ? ({ imageRendering: 'pixelated' } as unknown as ImageStyle)
@@ -67,6 +69,7 @@ export function StaticPet({
   const shouldUseHamsterBabyAnimation = pet.id === 'hamster' && stage === 'baby';
   const shouldUseCatBabyWalkAnimation = pet.id === 'cat' && stage === 'baby';
   const shouldUseCatBabyDozeAnimation = pet.id === 'cat' && stage === 'baby';
+  const shouldUseCatChildDozeAnimation = pet.id === 'cat' && stage === 'child';
   const shouldUseDogBabyWalkAnimation = pet.id === 'dog' && stage === 'baby';
   const shouldUseDogBabyDozeAnimation = pet.id === 'dog' && stage === 'baby';
   const shouldUseWalkAnimation = shouldUseHamsterBabyAnimation
@@ -74,17 +77,23 @@ export function StaticPet({
     || shouldUseDogBabyWalkAnimation;
   const shouldUseDozeAnimation = shouldUseHamsterBabyAnimation
     || shouldUseCatBabyDozeAnimation
+    || shouldUseCatChildDozeAnimation
     || shouldUseDogBabyDozeAnimation;
   const walkSpriteSheet = shouldUseCatBabyWalkAnimation
     ? catBabyWalkSheet
     : shouldUseDogBabyWalkAnimation
       ? dogBabyWalkSheet
       : hamsterBabyWalkSheet;
-  const dozeSpriteSheet = shouldUseCatBabyDozeAnimation
-    ? catBabyDozeSheet
-    : shouldUseDogBabyDozeAnimation
-      ? dogBabyDozeSheet
-      : hamsterBabyDozeSheet;
+  const dozeSpriteSheet = shouldUseCatChildDozeAnimation
+    ? catChildDozeSheet
+    : shouldUseCatBabyDozeAnimation
+      ? catBabyDozeSheet
+      : shouldUseDogBabyDozeAnimation
+        ? dogBabyDozeSheet
+        : hamsterBabyDozeSheet;
+  const dozeDisplaySize = shouldUseCatChildDozeAnimation
+    ? Math.round(size * catChildDozeDisplayScale)
+    : size;
   const shouldFlipWalkFrame =
     (shouldUseHamsterBabyAnimation && walkDirection === 'right')
     || ((shouldUseCatBabyWalkAnimation || shouldUseDogBabyWalkAnimation) && walkDirection === 'left');
@@ -136,7 +145,7 @@ export function StaticPet({
           />
         </View>
       ) : shouldUseDozeAnimation && isDozing ? (
-        <View style={[styles.walkFrame, { height: size, width: size }]}>
+        <View style={[styles.walkFrame, { height: dozeDisplaySize, width: dozeDisplaySize }]}>
           <Image
             accessibilityIgnoresInvertColors
             source={dozeSpriteSheet}
@@ -144,9 +153,9 @@ export function StaticPet({
               styles.walkSpriteSheet,
               pixelatedImageStyle,
               {
-                height: size,
-                transform: [{ translateX: -size * dozeFrameIndex }],
-                width: size * hamsterBabyDozeFrameCount,
+                height: dozeDisplaySize,
+                transform: [{ translateX: -dozeDisplaySize * dozeFrameIndex }],
+                width: dozeDisplaySize * hamsterBabyDozeFrameCount,
               },
             ]}
           />
@@ -174,10 +183,12 @@ export function StaticPet({
       setWalkDirection('left');
       setWalkOffsetX(0);
       setIsWalking(false);
+      isInsideDozeZoneRef.current = false;
+    }
+
+    if (!shouldUseDozeAnimation) {
       setIsDozing(false);
       setDozeFrameIndex(0);
-      isInsideDozeZoneRef.current = false;
-      return;
     }
 
     if (!isWalking) {
@@ -190,7 +201,7 @@ export function StaticPet({
     }, hamsterBabyWalkFrameDurationMs);
 
     return () => clearInterval(intervalId);
-  }, [isWalking, shouldUseWalkAnimation]);
+  }, [isWalking, shouldUseDozeAnimation, shouldUseWalkAnimation]);
 
   useEffect(() => {
     if (!animationActionTrigger) {
