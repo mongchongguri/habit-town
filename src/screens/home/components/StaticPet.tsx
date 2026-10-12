@@ -8,6 +8,7 @@ const hamsterBabyDozeSheet = require('../../../../assets/png/animals/animations/
 const catBabyWalkSheet = require('../../../../assets/png/animals/animations/applied/cat/walk/cat-baby-walk-spritesheet-v2.png');
 const catBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-baby-doze-spritesheet-v2.png');
 const catChildDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-child-doze-spritesheet-v2.png');
+const catTeenDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-teen-doze-spritesheet-v2.png');
 const dogBabyWalkSheet = require('../../../../assets/png/animals/animations/applied/dog/walk/dog-baby-walk-spritesheet-v2.png');
 const dogBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/dog/doze/dog-baby-doze-spritesheet-v2.png');
 const hamsterBabyWalkFrameCount = 4;
@@ -23,6 +24,7 @@ const hamsterBabyDozeSleepDurationMs = 12000;
 const hamsterBabyDozeLoop = [1, 2, 3, 2, 1];
 const hamsterBabyCushionDozeChance = 0.45;
 const catChildDozeDisplayScale = 1.2;
+const catTeenDozeDisplayScale = 1.3;
 const pixelatedImageStyle =
   Platform.OS === 'web'
     ? ({ imageRendering: 'pixelated' } as unknown as ImageStyle)
@@ -70,6 +72,7 @@ export function StaticPet({
   const shouldUseCatBabyWalkAnimation = pet.id === 'cat' && stage === 'baby';
   const shouldUseCatBabyDozeAnimation = pet.id === 'cat' && stage === 'baby';
   const shouldUseCatChildDozeAnimation = pet.id === 'cat' && stage === 'child';
+  const shouldUseCatTeenDozeAnimation = pet.id === 'cat' && stage === 'teen';
   const shouldUseDogBabyWalkAnimation = pet.id === 'dog' && stage === 'baby';
   const shouldUseDogBabyDozeAnimation = pet.id === 'dog' && stage === 'baby';
   const shouldUseWalkAnimation = shouldUseHamsterBabyAnimation
@@ -78,22 +81,27 @@ export function StaticPet({
   const shouldUseDozeAnimation = shouldUseHamsterBabyAnimation
     || shouldUseCatBabyDozeAnimation
     || shouldUseCatChildDozeAnimation
+    || shouldUseCatTeenDozeAnimation
     || shouldUseDogBabyDozeAnimation;
   const walkSpriteSheet = shouldUseCatBabyWalkAnimation
     ? catBabyWalkSheet
     : shouldUseDogBabyWalkAnimation
       ? dogBabyWalkSheet
       : hamsterBabyWalkSheet;
-  const dozeSpriteSheet = shouldUseCatChildDozeAnimation
-    ? catChildDozeSheet
-    : shouldUseCatBabyDozeAnimation
-      ? catBabyDozeSheet
-      : shouldUseDogBabyDozeAnimation
-        ? dogBabyDozeSheet
-        : hamsterBabyDozeSheet;
+  const dozeSpriteSheet = shouldUseCatTeenDozeAnimation
+    ? catTeenDozeSheet
+    : shouldUseCatChildDozeAnimation
+      ? catChildDozeSheet
+      : shouldUseCatBabyDozeAnimation
+        ? catBabyDozeSheet
+        : shouldUseDogBabyDozeAnimation
+          ? dogBabyDozeSheet
+          : hamsterBabyDozeSheet;
   const dozeDisplaySize = shouldUseCatChildDozeAnimation
     ? Math.round(size * catChildDozeDisplayScale)
-    : size;
+    : shouldUseCatTeenDozeAnimation
+      ? Math.round(size * catTeenDozeDisplayScale)
+      : size;
   const shouldFlipWalkFrame =
     (shouldUseHamsterBabyAnimation && walkDirection === 'right')
     || ((shouldUseCatBabyWalkAnimation || shouldUseDogBabyWalkAnimation) && walkDirection === 'left');

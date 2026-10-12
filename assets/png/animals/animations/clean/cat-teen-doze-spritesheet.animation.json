@@ -1,0 +1,21 @@
+{
+  "id": "cat_teen_doze",
+  "source": "assets/png/animals/animations/raw/cat-teen-doze-generated-v2.png",
+  "reference": "assets/png/animals/animations/raw/cat-teen-doze-source.png",
+  "frameCount": 4,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "durationMs": 620,
+  "background": "transparent",
+  "appliedSheet": "assets/png/animals/animations/applied/cat/doze/cat-teen-doze-spritesheet-v2.png",
+  "notes": [
+    "The supplied 1774x887 RGB sheet is preserved unchanged and used only as a sleeping-pose reference",
+    "The generated source uses the existing cat teen character as the anatomy and marking reference with genuine transparency",
+    "Frames use calm, breath-puff, Z, and subtle ear-and-tail-change poses",
+    "Teen proportions use a reduced head ratio, longer lean torso, developed chest, elongated hindquarters, longer legs, and a readable tail",
+    "Four frames share one 128x128 logical grid and palette before 2x nearest-neighbor output",
+    "Frames use binary transparency, a maximum of 32 colors, and no pale outer halo",
+    "The app renders the teen sleeping pose at 1.3x so its perceived growth remains larger than the child stage",
+    "The sleeping loop uses frames 2-3-4-3-2 in app code"
+  ]
+}
