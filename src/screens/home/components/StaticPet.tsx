@@ -25,8 +25,8 @@ const hamsterBabyDozeSleepDurationMs = 12000;
 const hamsterBabyDozeLoop = [1, 2, 3, 2, 1];
 const hamsterBabyCushionDozeChance = 0.45;
 const catChildDozeDisplayScale = 1.2;
-const catTeenDozeDisplayScale = 1.3;
-const catAdultDozeDisplayScale = 1.4;
+const catTeenDozeDisplayScale = 1.1;
+const catAdultDozeDisplayScale = 1.15;
 const pixelatedImageStyle =
   Platform.OS === 'web'
     ? ({ imageRendering: 'pixelated' } as unknown as ImageStyle)
