@@ -1,0 +1,21 @@
+{
+  "id": "cat_adult_doze",
+  "source": "assets/png/animals/animations/raw/cat-adult-doze-generated-v2.png",
+  "reference": "assets/png/animals/animations/raw/cat-adult-doze-source.png",
+  "frameCount": 4,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "durationMs": 620,
+  "background": "transparent",
+  "appliedSheet": "assets/png/animals/animations/applied/cat/doze/cat-adult-doze-spritesheet-v2.png",
+  "notes": [
+    "The supplied 1774x887 RGB sheet is preserved unchanged and used only as a sleeping-pose reference because its checkerboard is baked into the pixels",
+    "The generated source uses the existing cat adult character as the anatomy and marking reference with genuine transparency",
+    "Frames use calm, breath-puff, Z, and subtle ear-and-tail-change poses",
+    "Adult proportions use the smallest head ratio, broad developed chest, long sturdy torso, elongated hindquarters, larger paws, and a thick readable tail",
+    "Four frames share one 128x128 logical grid and palette before 2x nearest-neighbor output",
+    "Frames use binary transparency, a maximum of 32 colors, and no pale outer halo",
+    "The app renders the adult sleeping pose at 1.4x so its perceived growth remains larger than the teen stage",
+    "The sleeping loop uses frames 2-3-4-3-2 in app code"
+  ]
+}
