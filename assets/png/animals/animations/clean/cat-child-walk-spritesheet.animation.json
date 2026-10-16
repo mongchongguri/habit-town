@@ -1,0 +1,26 @@
+{
+  "id": "cat_child_walk",
+  "source": "assets/png/animals/animations/raw/cat-child-walk-source.png",
+  "frameCount": 4,
+  "frameWidth": 627,
+  "frameHeight": 627,
+  "durationMs": 220,
+  "background": "transparent",
+  "appliedSheet": "assets/png/animals/animations/applied/cat/walk/cat-child-walk-spritesheet-v6.png",
+  "appliedFrames": [
+    "assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-000-v6.png",
+    "assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-001-v6.png",
+    "assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-002-v6.png",
+    "assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-003-v6.png"
+  ],
+  "notes": [
+    "Preserves the supplied 2508x627 source pixels without resizing or redrawing",
+    "Splits the horizontal strip into four native 627x627 frames",
+    "Uses an ImageGen transparent-background edit as the alpha reference while preserving the supplied source RGB pixels",
+    "Keeps black fur, facial features, and the complete outer silhouette opaque instead of deleting black pixels by color",
+    "Uses integer-only frame offsets to align every visible sprite to the horizontal center and a shared y=583 ground line",
+    "Exports binary alpha with transparent frame corners",
+    "Loads four individual applied frame assets at runtime instead of translating one wide sheet",
+    "Uses the existing four-frame walk timing and horizontal movement behavior"
+  ]
+}
