@@ -1,0 +1,116 @@
+{
+  "id": "cat-teen-walk-v1",
+  "character": "cat",
+  "stage": "teen",
+  "animation": "walk",
+  "reference": "src/assets/growth-pixel-character/references/cat-teen-walk-user-reference.png",
+  "referenceDimensions": [
+    2172,
+    724
+  ],
+  "sourceComponentBounds": [
+    [
+      26,
+      118,
+      578,
+      627
+    ],
+    [
+      590,
+      125,
+      1104,
+      631
+    ],
+    [
+      1102,
+      123,
+      1641,
+      629
+    ]
+  ],
+  "sourcePoseSequence": [
+    0,
+    1,
+    2,
+    1
+  ],
+  "nativeCanvas": [
+    627,
+    627
+  ],
+  "outputScale": 1,
+  "frameCount": 4,
+  "frameDurationMs": 220,
+  "direction": "right",
+  "runtimeMirroring": "flip horizontally only when moving left",
+  "alpha": {
+    "mode": "binary",
+    "threshold": 128,
+    "background": "transparent"
+  },
+  "alignment": {
+    "horizontal": "center",
+    "baselineY": 583,
+    "resizing": "none; preserve supplied native pixels"
+  },
+  "cleanSpriteSheet": "assets/png/animals/animations/clean/cat-teen-walk-spritesheet.png",
+  "appliedSpriteSheet": "assets/png/animals/animations/applied/cat/walk/cat-teen-walk-spritesheet-v1.png",
+  "frames": [
+    {
+      "index": 0,
+      "sourcePose": 0,
+      "durationMs": 220,
+      "raw": "assets/png/animals/animations/raw/cat-teen-walk/frame-000-source.png",
+      "clean": "assets/png/animals/animations/clean/cat-teen-walk/frame-000.png",
+      "applied": "assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-000-v1.png",
+      "opaqueBounds": [
+        37,
+        75,
+        589,
+        584
+      ]
+    },
+    {
+      "index": 1,
+      "sourcePose": 1,
+      "durationMs": 220,
+      "raw": "assets/png/animals/animations/raw/cat-teen-walk/frame-001-source.png",
+      "clean": "assets/png/animals/animations/clean/cat-teen-walk/frame-001.png",
+      "applied": "assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-001-v1.png",
+      "opaqueBounds": [
+        56,
+        78,
+        570,
+        584
+      ]
+    },
+    {
+      "index": 2,
+      "sourcePose": 2,
+      "durationMs": 220,
+      "raw": "assets/png/animals/animations/raw/cat-teen-walk/frame-002-source.png",
+      "clean": "assets/png/animals/animations/clean/cat-teen-walk/frame-002.png",
+      "applied": "assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-002-v1.png",
+      "opaqueBounds": [
+        44,
+        78,
+        583,
+        584
+      ]
+    },
+    {
+      "index": 3,
+      "sourcePose": 1,
+      "durationMs": 220,
+      "raw": "assets/png/animals/animations/raw/cat-teen-walk/frame-003-source.png",
+      "clean": "assets/png/animals/animations/clean/cat-teen-walk/frame-003.png",
+      "applied": "assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-003-v1.png",
+      "opaqueBounds": [
+        56,
+        78,
+        570,
+        584
+      ]
+    }
+  ]
+}

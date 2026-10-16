@@ -12,6 +12,12 @@ const catChildWalkFrames = [
   require('../../../../assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-002-v6.png'),
   require('../../../../assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-003-v6.png'),
 ] as const;
+const catTeenWalkFrames = [
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-000-v1.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-001-v1.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-002-v1.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-003-v1.png'),
+] as const;
 const catBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-baby-doze-spritesheet-v2.png');
 const dogBabyWalkSheet = require('../../../../assets/png/animals/animations/applied/dog/walk/dog-baby-walk-spritesheet-v2.png');
 const dogBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/dog/doze/dog-baby-doze-spritesheet-v2.png');
@@ -70,12 +76,15 @@ export function StaticPet({
   const [isDozing, setIsDozing] = useState(false);
   const [dozeFrameIndex, setDozeFrameIndex] = useState(0);
   const [catChildWalkLoadFailed, setCatChildWalkLoadFailed] = useState(false);
+  const [catTeenWalkLoadFailed, setCatTeenWalkLoadFailed] = useState(false);
   const isInsideDozeZoneRef = useRef(false);
   const shouldUseHamsterBabyAnimation = pet.id === 'hamster' && stage === 'baby';
   const shouldUseCatBabyWalkAnimation = pet.id === 'cat' && stage === 'baby';
   const shouldUseCatChildWalkAnimation = pet.id === 'cat' && stage === 'child';
+  const shouldUseCatTeenWalkAnimation = pet.id === 'cat' && stage === 'teen';
   const shouldUseCatWalkAnimation = shouldUseCatBabyWalkAnimation
-    || shouldUseCatChildWalkAnimation;
+    || shouldUseCatChildWalkAnimation
+    || shouldUseCatTeenWalkAnimation;
   const shouldUseCatBabyDozeAnimation = pet.id === 'cat' && stage === 'baby';
   const shouldUseDogBabyWalkAnimation = pet.id === 'dog' && stage === 'baby';
   const shouldUseDogBabyDozeAnimation = pet.id === 'dog' && stage === 'baby';
@@ -95,6 +104,12 @@ export function StaticPet({
     : shouldUseDogBabyDozeAnimation
       ? dogBabyDozeSheet
       : hamsterBabyDozeSheet;
+  const catGrowthWalkFrames = shouldUseCatTeenWalkAnimation
+    ? catTeenWalkFrames
+    : catChildWalkFrames;
+  const catGrowthWalkLoadFailed = shouldUseCatTeenWalkAnimation
+    ? catTeenWalkLoadFailed
+    : catChildWalkLoadFailed;
   const shouldFlipWalkFrame =
     (shouldUseHamsterBabyAnimation && walkDirection === 'right')
     || ((shouldUseCatWalkAnimation || shouldUseDogBabyWalkAnimation) && walkDirection === 'left');
@@ -131,11 +146,18 @@ export function StaticPet({
             shouldFlipWalkFrame ? styles.walkFrameFacingRight : null,
           ]}
         >
-          {shouldUseCatChildWalkAnimation ? (
+          {shouldUseCatChildWalkAnimation || shouldUseCatTeenWalkAnimation ? (
             <Image
               accessibilityIgnoresInvertColors
-              onError={() => setCatChildWalkLoadFailed(true)}
-              source={catChildWalkLoadFailed ? petSource : catChildWalkFrames[walkFrameIndex]}
+              onError={() => {
+                if (shouldUseCatTeenWalkAnimation) {
+                  setCatTeenWalkLoadFailed(true);
+                  return;
+                }
+
+                setCatChildWalkLoadFailed(true);
+              }}
+              source={catGrowthWalkLoadFailed ? petSource : catGrowthWalkFrames[walkFrameIndex]}
               style={[
                 styles.activePetSprite,
                 pixelatedImageStyle,
