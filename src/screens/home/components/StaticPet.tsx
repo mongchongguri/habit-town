@@ -7,6 +7,18 @@ const hamsterBabyWalkSheet = require('../../../../assets/png/animals/animations/
 const hamsterChildWalkSheet = require('../../../../assets/png/animals/animations/applied/hamster/walk/hamster-child-walk-spritesheet-v2.png');
 const hamsterBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/hamster/doze/hamster-baby-doze-spritesheet-v2.png');
 const catBabyWalkSheet = require('../../../../assets/png/animals/animations/applied/cat/walk/cat-baby-walk-spritesheet-v2.png');
+const catChildWalkFrames = [
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-000-v6.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-001-v6.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-002-v6.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-child-walk-v6/frame-003-v6.png'),
+] as const;
+const catTeenWalkFrames = [
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-000-v1.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-001-v1.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-002-v1.png'),
+  require('../../../../assets/png/animals/animations/applied/cat/walk/cat-teen-walk-v1/frame-003-v1.png'),
+] as const;
 const catBabyDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-baby-doze-spritesheet-v2.png');
 const catChildDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-child-doze-spritesheet-v2.png');
 const catTeenDozeSheet = require('../../../../assets/png/animals/animations/applied/cat/doze/cat-teen-doze-spritesheet-v2.png');
@@ -70,10 +82,17 @@ export function StaticPet({
   const [isWalking, setIsWalking] = useState(false);
   const [isDozing, setIsDozing] = useState(false);
   const [dozeFrameIndex, setDozeFrameIndex] = useState(0);
+  const [catChildWalkLoadFailed, setCatChildWalkLoadFailed] = useState(false);
+  const [catTeenWalkLoadFailed, setCatTeenWalkLoadFailed] = useState(false);
   const isInsideDozeZoneRef = useRef(false);
   const shouldUseHamsterBabyAnimation = pet.id === 'hamster' && stage === 'baby';
   const shouldUseHamsterChildWalkAnimation = pet.id === 'hamster' && stage === 'child';
   const shouldUseCatBabyWalkAnimation = pet.id === 'cat' && stage === 'baby';
+  const shouldUseCatChildWalkAnimation = pet.id === 'cat' && stage === 'child';
+  const shouldUseCatTeenWalkAnimation = pet.id === 'cat' && stage === 'teen';
+  const shouldUseCatWalkAnimation = shouldUseCatBabyWalkAnimation
+    || shouldUseCatChildWalkAnimation
+    || shouldUseCatTeenWalkAnimation;
   const shouldUseCatBabyDozeAnimation = pet.id === 'cat' && stage === 'baby';
   const shouldUseCatChildDozeAnimation = pet.id === 'cat' && stage === 'child';
   const shouldUseCatTeenDozeAnimation = pet.id === 'cat' && stage === 'teen';
@@ -82,7 +101,7 @@ export function StaticPet({
   const shouldUseDogBabyDozeAnimation = pet.id === 'dog' && stage === 'baby';
   const shouldUseWalkAnimation = shouldUseHamsterBabyAnimation
     || shouldUseHamsterChildWalkAnimation
-    || shouldUseCatBabyWalkAnimation
+    || shouldUseCatWalkAnimation
     || shouldUseDogBabyWalkAnimation;
   const shouldUseDozeAnimation = shouldUseHamsterBabyAnimation
     || shouldUseCatBabyDozeAnimation
@@ -115,9 +134,15 @@ export function StaticPet({
       : shouldUseCatAdultDozeAnimation
         ? Math.round(size * catAdultDozeDisplayScale)
         : size;
+  const catGrowthWalkFrames = shouldUseCatTeenWalkAnimation
+    ? catTeenWalkFrames
+    : catChildWalkFrames;
+  const catGrowthWalkLoadFailed = shouldUseCatTeenWalkAnimation
+    ? catTeenWalkLoadFailed
+    : catChildWalkLoadFailed;
   const shouldFlipWalkFrame =
     ((shouldUseHamsterBabyAnimation || shouldUseHamsterChildWalkAnimation) && walkDirection === 'right')
-    || ((shouldUseCatBabyWalkAnimation || shouldUseDogBabyWalkAnimation) && walkDirection === 'left');
+    || ((shouldUseCatWalkAnimation || shouldUseDogBabyWalkAnimation) && walkDirection === 'left');
   const walkRange = Math.round(size * hamsterBabyWalkRangeRatio);
   const walkStep = Math.max(2, Math.round(size * hamsterBabyWalkStepRatio));
   const containerStyle = [
@@ -151,19 +176,39 @@ export function StaticPet({
             shouldFlipWalkFrame ? styles.walkFrameFacingRight : null,
           ]}
         >
-          <Image
-            accessibilityIgnoresInvertColors
-            source={walkSpriteSheet}
-            style={[
-              styles.walkSpriteSheet,
-              pixelatedImageStyle,
-              {
-                height: size,
-                transform: [{ translateX: -size * walkFrameIndex }],
-                width: size * hamsterBabyWalkFrameCount,
-              },
-            ]}
-          />
+          {shouldUseCatChildWalkAnimation || shouldUseCatTeenWalkAnimation ? (
+            <Image
+              accessibilityIgnoresInvertColors
+              onError={() => {
+                if (shouldUseCatTeenWalkAnimation) {
+                  setCatTeenWalkLoadFailed(true);
+                  return;
+                }
+
+                setCatChildWalkLoadFailed(true);
+              }}
+              source={catGrowthWalkLoadFailed ? petSource : catGrowthWalkFrames[walkFrameIndex]}
+              style={[
+                styles.activePetSprite,
+                pixelatedImageStyle,
+                { height: size, width: size },
+              ]}
+            />
+          ) : (
+            <Image
+              accessibilityIgnoresInvertColors
+              source={walkSpriteSheet}
+              style={[
+                styles.walkSpriteSheet,
+                pixelatedImageStyle,
+                {
+                  height: size,
+                  transform: [{ translateX: -size * walkFrameIndex }],
+                  width: size * hamsterBabyWalkFrameCount,
+                },
+              ]}
+            />
+          )}
         </View>
       ) : shouldUseDozeAnimation && isDozing ? (
         <View style={[styles.walkFrame, { height: dozeDisplaySize, width: dozeDisplaySize }]}>
